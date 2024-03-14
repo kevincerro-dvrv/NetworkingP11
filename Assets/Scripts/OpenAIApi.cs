@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -32,15 +31,12 @@ public class OpenAIApi : MonoBehaviour
             webRequest.SetRequestHeader("Authorization", "Bearer " + API_KEY);
 
             // Request and wait for the desired page.
-            webRequest.method = UnityWebRequest.kHttpVerbPOST;
+            webRequest.downloadHandler = new DownloadHandlerAudioClip(TTS_ENDPOINT, AudioType.MPEG);
             yield return webRequest.SendWebRequest();
 
             if (webRequest.result != UnityWebRequest.Result.Success) {
                 Debug.LogError("Error: " + webRequest.error);
             } else {
-                //string response = webRequest.downloadHandler.text;
-                
-                // Download and play
                 AudioClip clip = DownloadHandlerAudioClip.GetContent(webRequest);
                 GameManager.instance.Play(clip);
             }
