@@ -10,18 +10,18 @@ public class OpenAIApi : MonoBehaviour
     private const string TTS_MODEL = "tts-1";
 
     // Start is called before the first frame update
-    public void TextToSpeech(string text)
+    public void TextToSpeech(string voice, string text)
     {
-        StartCoroutine(CallTextToSpeech(text));
+        StartCoroutine(CallTextToSpeech(voice, text));
     }
 
-    private IEnumerator CallTextToSpeech(string text)
+    private IEnumerator CallTextToSpeech(string voice, string text)
     {
         // Create body
         RequestBody requestBody = new RequestBody {
             model = TTS_MODEL,
             input = text,
-            voice = "alloy"
+            voice = voice,
         };
         string requestBodyJson = JsonUtility.ToJson(requestBody);
 
@@ -34,9 +34,7 @@ public class OpenAIApi : MonoBehaviour
             webRequest.downloadHandler = new DownloadHandlerAudioClip(TTS_ENDPOINT, AudioType.MPEG);
             yield return webRequest.SendWebRequest();
 
-            if (webRequest.result != UnityWebRequest.Result.Success) {
-                Debug.LogError("Error: " + webRequest.error);
-            } else {
+            if (webRequest.result == UnityWebRequest.Result.Success) {
                 AudioClip clip = DownloadHandlerAudioClip.GetContent(webRequest);
                 GameManager.instance.Play(clip);
             }

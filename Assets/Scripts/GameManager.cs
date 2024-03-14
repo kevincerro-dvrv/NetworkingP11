@@ -1,11 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     public OpenAIApi openAIApi1;
+
+    public Dropdown voiceSelector;
+    public InputField textInput;
     
     private AudioSource audioSource;
 
@@ -18,13 +20,14 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        openAIApi1.TextToSpeech("Hola Mundo");
+
+        textInput.onSubmit.AddListener(OnSubmitText);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public void OnSubmitText(string text)
+    {   
+        string voice = voiceSelector.options[voiceSelector.value].text;
+        openAIApi1.TextToSpeech(voice, text);
     }
 
     public void Play(AudioClip clip)
